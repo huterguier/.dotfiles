@@ -1,0 +1,12 @@
+# Play, record, convert, and stream select audio and video codecs
+brew "ffmpeg"
+# Ambitious Vim-fork focused on extensibility and agility
+brew "neovim"
+# Terminal multiplexer
+brew "tmux"
+# Parser generator tool
+brew "tree-sitter-cli"
+# Voice and text chat software
+cask "discord"
+# Video communication and virtual meeting platform
+cask "zoom"
