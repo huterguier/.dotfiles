@@ -32,5 +32,3 @@ chpwd() {
 
   [[ -z "$VIRTUAL_ENV" && -f ./.venv/bin/activate ]] && source ./.venv/bin/activate
 }
-
-chpwd
