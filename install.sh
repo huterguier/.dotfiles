@@ -27,7 +27,13 @@ done
 command -v fc-cache >/dev/null && fc-cache -f "$FONT_DIR" >/dev/null
 
 echo "==> Installing packages"
+command -v sudo >/dev/null && sudo -v || export NO_SUDO=1
 for f in "$DOTFILES_DIR"/packages/*.sh; do
+  # scripts that reference NO_SUDO handle the no-root case themselves
+  if [ -n "${NO_SUDO:-}" ] && grep -qw sudo "$f" && ! grep -qw NO_SUDO "$f"; then
+    echo "==> Skipping $(basename "$f") (needs sudo)"
+    continue
+  fi
   echo "==> Running $(basename "$f")"
   bash "$f"
 done
