@@ -19,6 +19,26 @@ case "$(uname -s)" in
       sudo apt install -y cmake pkg-config libfreetype-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3
       "$HOME/.cargo/bin/cargo" install alacritty
     fi
+
+    # cargo install only builds the binary — apt's package used to also
+    # register a .desktop entry, which is what desktop environments and
+    # x-terminal-emulator resolution actually look for
+    if [ ! -f "$HOME/.local/share/applications/alacritty.desktop" ]; then
+      mkdir -p "$HOME/.local/share/icons"
+      curl -sL "https://github.com/alacritty/alacritty/releases/latest/download/Alacritty.svg" -o "$HOME/.local/share/icons/Alacritty.svg"
+      mkdir -p "$HOME/.local/share/applications"
+      cat > "$HOME/.local/share/applications/alacritty.desktop" <<EOF
+[Desktop Entry]
+Type=Application
+Name=Alacritty
+GenericName=Terminal
+Comment=A fast, cross-platform, OpenGL terminal emulator
+Exec=$HOME/.cargo/bin/alacritty
+Icon=$HOME/.local/share/icons/Alacritty.svg
+Terminal=false
+Categories=System;TerminalEmulator;
+EOF
+    fi
     ;;
 esac
 
