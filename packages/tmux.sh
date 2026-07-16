@@ -3,6 +3,7 @@ set -euo pipefail
 
 TMUX_VERSION="3.7b"
 LIBEVENT_VERSION="2.1.12-stable"
+NCURSES_VERSION="6.5"
 BISON_VERSION="3.8.2"
 M4_VERSION="1.4.19"
 
@@ -46,6 +47,19 @@ case "$(uname -s)" in
         curl -fsSL "https://github.com/libevent/libevent/releases/download/release-${LIBEVENT_VERSION}/libevent-${LIBEVENT_VERSION}.tar.gz" -o "$BUILD_DIR/libevent.tar.gz"
         tar -xzf "$BUILD_DIR/libevent.tar.gz" -C "$BUILD_DIR"
         (cd "$BUILD_DIR/libevent-${LIBEVENT_VERSION}" && ./configure --prefix="$PREFIX" --disable-shared --with-pic --disable-openssl && make -j"$(nproc)" && make install) >/dev/null
+      fi
+
+      if [ ! -f /usr/include/ncurses.h ] && [ ! -f /usr/include/ncursesw/curses.h ] && [ ! -f "$PREFIX/include/ncurses.h" ]; then
+        echo "==> Building ncurses (tmux build dependency)"
+        curl -fsSL "https://ftp.gnu.org/gnu/ncurses/ncurses-${NCURSES_VERSION}.tar.gz" -o "$BUILD_DIR/ncurses.tar.gz"
+        tar -xzf "$BUILD_DIR/ncurses.tar.gz" -C "$BUILD_DIR"
+        (cd "$BUILD_DIR/ncurses-${NCURSES_VERSION}" && ./configure --prefix="$PREFIX" --with-shared --enable-widec --enable-overwrite --without-debug && make -j"$(nproc)" && make install) >/dev/null
+
+        # tmux's configure links -lncurses in addition to -lncursesw; alias the
+        # wide-char libs since we only build the widec variant.
+        ln -sf libncursesw.a "$PREFIX/lib/libncurses.a"
+        ln -sf "libncursesw.so.$NCURSES_VERSION" "$PREFIX/lib/libncurses.so.${NCURSES_VERSION%%.*}"
+        ln -sf "libncurses.so.${NCURSES_VERSION%%.*}" "$PREFIX/lib/libncurses.so"
       fi
 
       echo "==> Building tmux $TMUX_VERSION"
