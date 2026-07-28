@@ -1,6 +1,10 @@
 export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/.local/share/nvim/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
+
+for _local_share_bin in "$HOME"/.local/share/*/bin(N); do
+  export PATH="$_local_share_bin:$PATH"
+done
+unset _local_share_bin
 
 export NVM_DIR="$HOME/.nvm"
 
