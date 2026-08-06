@@ -21,6 +21,37 @@ tm() {
   fi
 }
 
+sopen() {
+  if [ -z "$1" ]; then
+    echo "usage: sopen host:remote/path/to/file" >&2
+    return 1
+  fi
+
+  local remote="$1" host path tmpdir local_file opener
+
+  host="${remote%%:*}"
+  path="${remote#*:}"
+  if [ "$host" = "$remote" ]; then
+    echo "sopen: expected host:path (e.g. myserver:~/pic.png)" >&2
+    return 1
+  fi
+
+  tmpdir=$(mktemp -d) || return 1
+  local_file="$tmpdir/$(basename "$path")"
+
+  if ! scp -q "$remote" "$local_file"; then
+    rm -rf "$tmpdir"
+    return 1
+  fi
+
+  case "$(uname -s)" in
+    Darwin) opener="open" ;;
+    Linux)  opener="xdg-open" ;;
+  esac
+
+  "$opener" "$local_file" >/dev/null 2>&1 &
+}
+
 chpwd() {
   if [[ -n "$VIRTUAL_ENV" ]] && { [[ "$PWD"/ != "$(dirname "$VIRTUAL_ENV")"/* ]] || ! type deactivate &>/dev/null; }; then
     if type deactivate &>/dev/null; then
