@@ -27,17 +27,19 @@ sopen() {
     return 1
   fi
 
-  local remote="$1" host path tmpdir local_file opener
+  # not `path`: zsh ties that to $PATH, so a local one blanks PATH for the
+  # rest of the function and nothing external resolves any more
+  local remote="$1" host rpath tmpdir local_file opener
 
   host="${remote%%:*}"
-  path="${remote#*:}"
+  rpath="${remote#*:}"
   if [ "$host" = "$remote" ]; then
     echo "sopen: expected host:path (e.g. myserver:~/pic.png)" >&2
     return 1
   fi
 
   tmpdir=$(mktemp -d) || return 1
-  local_file="$tmpdir/$(basename "$path")"
+  local_file="$tmpdir/$(basename "$rpath")"
 
   if ! scp -q "$remote" "$local_file"; then
     rm -rf "$tmpdir"
@@ -47,6 +49,11 @@ sopen() {
   case "$(uname -s)" in
     Darwin) opener="open" ;;
     Linux)  opener="xdg-open" ;;
+    *)
+      echo "sopen: no opener known for $(uname -s)" >&2
+      rm -rf "$tmpdir"
+      return 1
+      ;;
   esac
 
   "$opener" "$local_file" >/dev/null 2>&1 &
