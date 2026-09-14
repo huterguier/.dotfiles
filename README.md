@@ -19,6 +19,12 @@ Running `install.sh` again is safe — every step is guarded and skips anything 
   by hand (curl scripts, manual builds). Entries in `custom.sh` are guarded with
   `command -v <tool> >/dev/null || <install command>` so re-running is a no-op once installed.
 
+- `agents/` — coding agent config. `AGENTS.md` is the shared, tool-neutral instruction file;
+  per-tool config sits in `agents/<tool>/`. `packages/claude.sh` symlinks it into `~/.claude`
+  file by file (as `CLAUDE.md`, plus `settings.json`, `commands/`, `agents/`, `skills/`),
+  leaving the runtime state in that directory alone. Machine-specific Claude settings go in
+  `~/.claude/settings.local.json`, which stays untracked.
+
 nvim, tmux, and ghostty configs are **not** in this repo — they're their own repos
 (`huterguier/nvim`, `/tmux`, `/ghostty`) cloned by `install.sh` straight into
 `~/.config/<tool>`, since that's where those tools require their config to live.

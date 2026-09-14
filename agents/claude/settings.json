@@ -1,0 +1,11 @@
+{
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
+  "model": "claude-fable-5-1[1m]",
+  "effortLevel": "high",
+  "theme": "dark",
+  "agentPushNotifEnabled": true
+}
