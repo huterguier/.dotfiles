@@ -61,18 +61,19 @@ scripts themselves.
   the link instead of nesting inside it), and moves a pre-existing real file aside to `.bak`
   once. Unlike the other package scripts it has no early `command -v` exit — the CLI install
   is guarded on its own so the symlink wiring still runs on every invocation.
-- **Desktop entries**: GUI apps installed from a tarball or AppImage on Linux (thunderbird,
-  zotero, ghostty) get a hand-written `~/.local/share/applications/<app>.desktop`,
-  since only a distro package would otherwise register one.
+- **Desktop entries**: GUI apps installed outside the distro package manager on Linux
+  (thunderbird, zotero, alacritty) get a hand-written
+  `~/.local/share/applications/<app>.desktop`, since only a distro package would otherwise
+  register one.
 - **External tool configs are separate repos**, not part of this one: nvim, tmux, and
-  ghostty configs live in `huterguier/nvim`, `huterguier/tmux`, `huterguier/ghostty`
+  alacritty configs live in `huterguier/nvim`, `huterguier/tmux`, `huterguier/alacritty`
   and are cloned into `~/.config/<tool>` at the end of the corresponding
   `packages/<tool>.sh`, since that's where those tools require their config to live. Don't
-  try to find nvim/tmux/ghostty config in this repo — it isn't here. The clones use SSH
+  try to find nvim/tmux/alacritty config in this repo — it isn't here. The clones use SSH
   remotes, so they need a working GitHub SSH key.
 - **Upstream-over-distro**: several tools deliberately bypass the system package manager
-  because the packaged version lags badly — nvim, fzf, and ghostty all say so in a
-  comment. `tmux.sh` goes furthest and builds tmux from source into `~/.local`, including
+  because the packaged version lags badly or is otherwise unusable — nvim, fzf, and
+  alacritty all say so in a comment. `tmux.sh` goes furthest and builds tmux from source into `~/.local`, including
   building m4/bison/libevent/ncurses first when they're missing; it's pinned to
   `TMUX_VERSION` and rebuilds when the installed `tmux -V` doesn't match.
 - **Fonts**: `fonts/*/*.ttf` are installed by symlink on Linux (`~/.local/share/fonts`) and

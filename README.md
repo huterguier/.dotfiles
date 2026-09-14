@@ -25,6 +25,6 @@ Running `install.sh` again is safe — every step is guarded and skips anything 
   leaving the runtime state in that directory alone. Machine-specific Claude settings go in
   `~/.claude/settings.local.json`, which stays untracked.
 
-nvim, tmux, and ghostty configs are **not** in this repo — they're their own repos
-(`huterguier/nvim`, `/tmux`, `/ghostty`) cloned by `install.sh` straight into
+nvim, tmux, and alacritty configs are **not** in this repo — they're their own repos
+(`huterguier/nvim`, `/tmux`, `/alacritty`) cloned by `install.sh` straight into
 `~/.config/<tool>`, since that's where those tools require their config to live.
