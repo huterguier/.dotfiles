@@ -18,3 +18,5 @@ nvm() {
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" --no-use
   nvm "$@"
 }
+
+export WANDB_USE_DOT_WANDB=true
