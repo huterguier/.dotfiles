@@ -52,9 +52,10 @@ scripts themselves.
   `zsh/exports.zsh` puts `~/.local/bin` and `~/.cargo/bin` on `PATH` and auto-globs every
   `~/.local/share/*/bin` directory, so a tarball unpacked there needs no `PATH` edit.
 - **Coding agents**: `agents/` holds agent config. `agents/AGENTS.md` is the canonical,
-  tool-neutral instruction file (the name most agents read); per-tool config lives in
-  `agents/<tool>/`. `packages/claude.sh` symlinks it in as `~/.claude/CLAUDE.md`, along with
-  `agents/claude/{settings.json,commands,agents,skills}`. The links are per-file on purpose —
+  tool-neutral instruction file (the name most agents read), and `agents/skills/` holds
+  tool-neutral Agent Skills (`<name>/SKILL.md`); per-tool config lives in `agents/<tool>/`.
+  `packages/claude.sh` symlinks them in as `~/.claude/CLAUDE.md` and `~/.claude/skills`, along
+  with `agents/claude/{settings.json,commands,agents}`. The links are per-file on purpose —
   `~/.claude` is mostly runtime state (`projects/`, `history.jsonl`, `.credentials.json`) and
   must stay a real directory. Its `link()` helper skips sources that don't exist, so only the
   subdirectories actually in the repo get linked, uses `ln -sfn` (`-n` so re-running replaces
