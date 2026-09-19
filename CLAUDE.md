@@ -41,7 +41,7 @@ scripts themselves.
   path/app-bundle check so re-running is a no-op, and branches on `uname -s` internally
   (`brew`/`brew install --cask` on Darwin, apt or an upstream tarball/build on Linux).
   Scripts may invoke each other by path (via a `SCRIPT_DIR`-relative `bash` call) when
-  there's a real build dependency, though nothing does so right now.
+  there's a real build dependency (`mslurm.sh` runs `uv.sh` first).
 - **`NO_SUDO`**: `install.sh` sets `NO_SUDO=1` when `sudo -v` isn't available, then skips
   any package script that mentions `sudo` but not `NO_SUDO`. A script that wants to run on
   root-less machines must handle the case itself and reference `NO_SUDO` by name (see
