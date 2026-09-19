@@ -1,0 +1,41 @@
+#!/bin/zsh
+# Local end of `ropen`: receives "<token> <host:/abs/path | url>" lines on a
+# loopback port that ssh's RemoteForward exposes on the remote host.
+
+source "${0:A:h:h}/zsh/functions.zsh"
+
+PORT=7878
+TOKEN=$(<"$HOME/.config/ropen/token") || exit 1
+# `open` executes some file types (.command, .app, ...), so only hand it inert ones
+ALLOWED=(png jpg jpeg gif webp tiff bmp heic pdf txt md csv json log mp4 mov)
+
+while true; do
+  line=$(nc -l 127.0.0.1 $PORT | head -c 4096 | head -n 1)
+  if [[ -z "$line" ]]; then
+    sleep 1
+    continue
+  fi
+
+  if [[ "${line%% *}" != "$TOKEN" ]]; then
+    print -u2 "ropen-listen: bad token"
+    continue
+  fi
+  target="${line#* }"
+
+  case "$target" in
+    http://*|https://*)
+      open "$target"
+      ;;
+    *)
+      host="${target%%:*}"
+      rpath="${target#*:}"
+      # host and path end up as scp arguments and in a local path
+      if [[ "$host" =~ '^[A-Za-z0-9][A-Za-z0-9._-]*$' && "$rpath" == /* && "$rpath" != */../* \
+            && ${ALLOWED[(Ie)${(L)rpath:e}]} -gt 0 ]]; then
+        sopen "$target"
+      else
+        print -u2 "ropen-listen: rejected $target"
+      fi
+      ;;
+  esac
+done

@@ -62,6 +62,15 @@ scripts themselves.
   the link instead of nesting inside it), and moves a pre-existing real file aside to `.bak`
   once. Unlike the other package scripts it has no early `command -v` exit — the CLI install
   is guarded on its own so the symlink wiring still runs on every invocation.
+- **ropen** (open remote files locally): `ropen file|url` in `zsh/functions.zsh` runs on
+  the remote host and writes `<token> <alias>:/abs/path` to `127.0.0.1:7878`, which an ssh
+  `RemoteForward` (in the untracked `~/.ssh/config`, only for trusted single-user hosts)
+  carries back to `bin/ropen-listen` on the local machine. The listener checks the token,
+  validates host/path, only accepts an allowlist of inert file types, and calls `sopen` to
+  scp the file into `~/.cache/ropen/<host>/<path>` and open it. `packages/ropen.sh`
+  (Darwin only) generates `~/.config/ropen/token` and installs the listener as a launchd
+  agent (`local.ropen-listen`, log in `~/Library/Logs/ropen-listen.log`); `ropen-setup
+  <host>` copies the token and the ssh alias to a remote. `bin/` is not on `PATH`.
 - **Desktop entries**: GUI apps installed outside the distro package manager on Linux
   (thunderbird, zotero, alacritty) get a hand-written
   `~/.local/share/applications/<app>.desktop`, since only a distro package would otherwise
