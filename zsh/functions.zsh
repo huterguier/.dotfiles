@@ -90,6 +90,16 @@ ropen() {
   fi
 }
 
+open() {
+  if [[ -r "$HOME/.config/ropen/host" ]]; then
+    ropen "$@"
+  elif [[ "$(uname -s)" = Darwin ]]; then
+    command open "$@"
+  else
+    xdg-open "$@" >/dev/null 2>&1 &!
+  fi
+}
+
 # run on the local machine: copies the ropen token to a host and records the
 # ssh alias the host should identify itself with
 ropen-setup() {
