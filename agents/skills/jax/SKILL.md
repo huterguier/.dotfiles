@@ -1,5 +1,5 @@
 ---
-name: jax-style
+name: jax
 description: Write JAX code matching the author's personal style. Use whenever writing or reviewing JAX code — pytrees, jit/vmap/scan, RNG keys, dataclasses, typing.
 ---
 
@@ -47,7 +47,8 @@ rollout = jax.jit(ppo.rollout, static_argnames="num_steps")  # bound once, outsi
 ## Pytrees and state
 
 - Plain `@dataclass` + `@jax.tree_util.register_dataclass`. Never equinox, flax `struct`,
-  `chex.dataclass`, or flax `nnx`. `NamedTuple` only for small scan carries.
+  `chex.dataclass`, or flax `nnx`. `NamedTuple` only for small scan carries;
+  host-side records that never pass through JAX (e.g. rendering rows) are exempt.
 - **Config lives on `self`, state is a separate pytree.** A class (`Agent`, `Dynamics`,
   `Environment`, `Solver`, `Buffer`) holds only what is fixed at construction: hyperparams,
   `cost_fn`, spaces, network modules. Anything reassigned between calls is state and is
@@ -68,9 +69,11 @@ rollout = jax.jit(ppo.rollout, static_argnames="num_steps")  # bound once, outsi
 
 ## Interfaces
 
-- Shared contracts are `typing.Protocol`, never `ABC`. Implementations satisfy them
+- Shared contracts are `typing.Protocol` by default. Implementations satisfy them
   structurally and do not inherit from them, so `@abstractmethod` has no effect and is
-  not used. Parametrize over state types with PEP 695 generics:
+  not used. Use an `ABC` with `@abstractmethod` and inheritance only when the base class
+  gives implementations real methods built on the abstract ones (e.g.
+  `Logger.spool`/`tap` on top of `callback`). Parametrize over state types with PEP 695 generics:
   `class Agent[TState, TCarry](Protocol)`.
 - Argument order: `key` first when the method consumes randomness, the object's own
   state next as bare `state`, foreign state qualified (`dynamics_state`).
@@ -158,6 +161,6 @@ rollout = jax.jit(ppo.rollout, static_argnames="num_steps")  # bound once, outsi
 
 ## Project conventions
 
-- `requires-python >= 3.12`. Lint only: ruff, `target-version = "py312"`,
-  `select = ["E", "F", "I", "W", "UP", "B"]`, `ignore = ["E501"]`. No `ruff format`,
-  black, separate isort, or mypy.
+- `requires-python >= 3.12`. ruff for formatting and linting: `target-version = "py312"`,
+  `line-length = 88`, `select = ["E", "F", "I", "W", "UP", "B"]`. Run `ruff format` then
+  `ruff check --fix`. No black, separate isort, or mypy.
