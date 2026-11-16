@@ -4,6 +4,7 @@
     "pr": "",
     "sessionUrl": false
   },
+  "model": "opus",
   "effortLevel": "high",
   "theme": "dark",
   "agentPushNotifEnabled": true
